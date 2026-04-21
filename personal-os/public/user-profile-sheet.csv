@@ -1,39 +1,82 @@
-# personal-os  YOUR live profile sheet (UTF-8 CSV). Not Excel .xlsx  use Save As CSV UTF-8 from Excel.
-# Columns: section,key,value
+# personal-os — live user profile (UTF-8 CSV). Columns: section,key,value
+# In Excel use File > Save As > CSV UTF-8 — do not save as .xlsx into this filename.
 section,key,value
-meta,sheet_version,1
+meta,sheet_version,2
 meta,timezone,Africa/Johannesburg
 meta,locale,en-ZA
+meta,core_memory_updated,2026-04-18
 
-identity,legal_name,Ethan Barnes
+identity,legal_name,Ethan
 identity,preferred_name,Ethan
+identity,city,Durban
 identity,country,South Africa
 
-work,job_title,IT Engineer
-work,shift_cycle,2 days ON � 2 nights ON � 2 OFF
-work,work_domains,Networking|MES|SCADA|VMs|Industrial systems
-
-company,legal_name,43v3r Technology
-company,role_in_company,Founder / builder
+work,job_title,IT Engineer (Tyre Manufacturing Factory)
+work,shift_cycle,2 days ON | 2 nights ON | 2 OFF (12-hour shifts)
+work,work_environment,Industrial factory; MES; SCADA; PLC-connected machines; HMIs; PCs; printers; VMs; network switches
+work,work_focus,Networking | Virtual machines | MES (SQL configs downtime tracking)
+work,current_challenge,Stronger practical understanding of factory systems; more efficient reliable troubleshooting
+work,performance_priority,Improve job performance and reliability on-shift
 
 finances,currency_primary,ZAR
 finances,monthly_take_home,21000
 finances,fixed_rent,3000
+finances,fixed_groceries,2000
 finances,fixed_wifi,500
-finances,fixed_car_payment,5200
-finances,fixed insurance,1500
-finances,fixed_family_support,1000
-finances,fixed_short_term_loan,1200
-finances,approx_fixed_total,12800
+finances,fixed_disney_plus,140
+finances,fixed_cigarettes,400
+finances,fixed_family_support_father,1000
+finances,variable_transport,Cab to work
+finances,variable_lunch,Regular lunch purchases
+finances,approx_fixed_known,7040
+finances,strategic_note,Limited disposable income; increase income aggressively; better structure and investment strategy
 
-constraints,hardware,8GB RAM laptop CPU-only (no GPU)
-constraints,capital,Limited  prefer low-cost validation and hosted free tiers
+skills,education,IT Diploma | Computer Engineering degree | Advanced Diploma IT (in progress) | Advanced Diploma Business Analysis (in progress)
+skills,technical,Networking | SQL MES databases | JavaScript | Industrial SCADA PLC integration | Basic AI tools
+skills,tools,Replit AI | Cursor AI | Lovable AI | make.com | Supabase | PostgreSQL pgAdmin | VS Code | Jupyter
 
-goals_startup,headline,Scale 43v3r Technology
+constraints,hardware,8GB RAM laptop | i5 CPU | no dedicated GPU
+constraints,capital,Limited capital for business experiments
+constraints,time,12-hour shifts limit build windows; balance job plus 43v3r
+constraints,execution,Risk of burnout and overcomplication — prefer structured daily execution
 
-agent_calibration,life_planner,Plans MUST respect 2d/2n/2off; never assume 95 availability
-agent_calibration,execution_coach,Max 12 core projects; max 3 non-negotiables per day
+company,legal_name,43v3r Technology
+company,role_in_company,Founder builder
+company,primary_goal_revenue,Build toward 100000 USD per month company (staged milestones in ZAR)
+company,secondary_goals,First paying customer ASAP | scalable SaaS | automated income | monetize AI systems
+company,interests,AI software | industrial data MES | crypto trading systems | automation | content branding tech music fashion
 
-ai_preferences,response_style,Direct|ZAR-first for money
+projects,primary_business,43v3r Technology — AI-powered software combining industrial systems AI automation
+projects,active_1,AI MES System — PLC IoT data collection AI refinement factory operations insights
+projects,active_2,MES Refine — data collection and refinement layer
+projects,active_3,AI MES Engine — visualization and insight system
+projects,active_4,AI Trading Bot — automated trading
+projects,active_5,AI Hedge Fund Concept — long-term automated investment vision
+projects,active_6,Football Prediction App — AI statistics web app
+projects,active_7,AI Content Agency — HeyGen ElevenLabs make.com social content
 
-context_now,current_week_focus,One line: what matters this week
+personal,music_production,Beats and collaboration with friends
+personal,fashion,Futuristic branding aligned with 43v3r creative vision
+personal,tech_interests,AI crypto quantum computing
+personal,brand_vision,43v3r as software company plus creative brand music fashion tech
+
+priorities,rank_1,Increase income
+priorities,rank_2,Improve job performance
+priorities,rank_3,Build profitable AI systems
+priorities,rank_4,Stay consistent despite shift schedule
+priorities,rank_5,Avoid burnout and overcomplication
+
+behavioral,pattern_multiproject,Tends to take on multiple complex projects — needs prioritization toward revenue
+behavioral,pattern_systems,Strong focus on building systems
+behavioral,pattern_execution,Needs structured daily execution and fewer parallel threads
+
+agent_calibration,life_planner,Plans MUST respect 2 days 2 nights 2 off 12h shifts; never assume 9-5; Durban ZAR context
+agent_calibration,execution_coach,Max 1-2 core revenue projects at a time; max 3 non-negotiables per day; push first paying customer over new features
+agent_calibration,financial_strategist,Use stated ZAR figures; flag leakage (subscriptions lunch transport cigarettes); TFSA ETF discipline where applicable
+agent_calibration,startup_builder,Fastest path to first paying customer; industrial AI MES credibility from day job
+agent_calibration,work_mastery,Practical factory troubleshooting MES SQL networking — one concrete skill action per session
+agent_calibration,synthesizer,Resolve conflicts favor sleep job performance then one revenue thread
+
+ai_preferences,response_style,Direct | ZAR-first for money | South Africa context
+
+context_now,current_week_focus,One revenue thread plus one job performance upgrade per week

@@ -1,16 +1,17 @@
-# personal-os — default profile sheet (UTF-8 CSV). Copy to user-profile-sheet.csv or use “Restore template” in the app.
+# personal-os — default profile sheet (UTF-8 CSV). Restore copies this to user-profile-sheet.csv.
 # Columns: section,key,value
 section,key,value
-meta,sheet_version,1
+meta,sheet_version,2
 meta,timezone,Africa/Johannesburg
 meta,locale,en-ZA
 
-identity,legal_name,YOUR FULL NAME
-identity,preferred_name,YOUR PREFERRED NAME
+identity,legal_name,Ethan
+identity,preferred_name,Ethan
+identity,city,Durban
 identity,country,South Africa
 
-work,job_title,IT Engineer
-work,shift_cycle,2 days ON → 2 nights ON → 2 OFF
+work,job_title,IT Engineer (Tyre Manufacturing Factory)
+work,shift_cycle,2 days ON | 2 nights ON | 2 OFF (12-hour shifts)
 work,work_domains,Networking|MES|SCADA|VMs|Industrial systems
 
 company,legal_name,43v3r Technology
@@ -19,19 +20,20 @@ company,role_in_company,Founder / builder
 finances,currency_primary,ZAR
 finances,monthly_take_home,21000
 finances,fixed_rent,3000
+finances,fixed_groceries,2000
 finances,fixed_wifi,500
-finances,fixed_car_payment,5200
-finances,fixed_family_support,1000
-finances,fixed_short_term_loan,1200
-finances,approx_fixed_total,11300
+finances,fixed_disney_plus,140
+finances,fixed_cigarettes,400
+finances,fixed_family_support_father,1000
+finances,approx_fixed_known,7040
 
-constraints,hardware,8GB RAM laptop CPU-only (no GPU)
+constraints,hardware,8GB RAM laptop | i5 | no dedicated GPU
 constraints,capital,Limited — prefer low-cost validation and hosted free tiers
 
-goals_startup,headline,Scale 43v3r Technology
+goals_startup,headline,Scale 43v3r Technology toward staged revenue milestones
 
-agent_calibration,life_planner,Plans MUST respect 2d/2n/2off; never assume 9–5 availability
-agent_calibration,execution_coach,Max 1–2 core projects; max 3 non-negotiables per day
+agent_calibration,life_planner,Plans MUST respect 2d/2n/2off; never assume 9-5; Durban ZAR
+agent_calibration,execution_coach,Max 1-2 core revenue projects; max 3 non-negotiables per day
 
 ai_preferences,response_style,Direct|ZAR-first for money
 
