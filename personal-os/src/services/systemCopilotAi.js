@@ -1,5 +1,5 @@
 import { getAiProxyOrigin } from "@/lib/aiProxyOrigin"
-import { fetchShiftCalendarExcerptForCopilot } from "@/lib/shiftCalendarForAi"
+import { fetchShiftCalendarExcerptForCopilot, SHIFT_CALENDAR_PDF_PUBLIC_PATH } from "@/lib/shiftCalendarForAi"
 import { getLocalDateISO } from "@/lib/utils"
 import { useStore } from "@/store/useStore"
 import {
@@ -190,6 +190,7 @@ export async function buildSystemCopilotContextBundle() {
     today_log,
     life_manager,
     shift_designation: "C shift",
+    shift_calendar_pdf_url: SHIFT_CALENDAR_PDF_PUBLIC_PATH,
     shift_calendar_excerpt,
   }
 }
@@ -200,7 +201,7 @@ function buildSystemPrompt() {
   const lmKeys = LIFE_MANAGER_MEMORY_KEYS.join(", ")
 
   return `You are a routing assistant for a personal productivity app (personal-os).
-The user message is followed by a JSON "Context" object with their local date, Today task draft, counts, a sample of their profile CSV rows (section/key/value), open SaaS tasks, open reminders, today's daily log row if it exists, \`life_manager\` (rolling AI digest + goals/finance snippets from Supabase when available), \`shift_designation\` (user is C shift), and \`shift_calendar_excerpt\` (bounded plain text from the 2026 shift PDF when the local AI proxy is running — may be empty).
+The user message is followed by a JSON "Context" object with their local date, Today task draft, counts, a sample of their profile CSV rows (section/key/value), open SaaS tasks, open reminders, today's daily log row if it exists, \`life_manager\` (rolling AI digest + goals/finance snippets from Supabase when available), \`shift_designation\` (user is C shift), \`shift_calendar_pdf_url\` (app path to the official 2026 shift PDF), and \`shift_calendar_excerpt\` (bounded plain text from that PDF via the local AI proxy when running — may be empty; use the PDF URL + profile shift rows when excerpt is empty).
 
 Use that context to choose the right operations: prefer append_profile_row when the user clearly wants a durable calibration field; prefer add_note for narrative capture; use existing profile keys as reference so you do not invent conflicting keys unless the user asks for a new one.
 

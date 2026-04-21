@@ -5,6 +5,7 @@
  * For day-to-day edits, prefer `public/user-profile-sheet.csv` (or `VITE_USER_PROFILE_SHEET_URL`).
  */
 
+import { SHIFT_CALENDAR_PDF_PUBLIC_PATH } from "@/lib/shiftCalendarForAi"
 import { getProfileSheetAppendix } from "@/lib/userProfileSheet"
 
 /** Full structured memory — canonical; keep in sync with `public/user-profile-sheet.csv`. */
@@ -35,7 +36,7 @@ export const USER_MEMORY_PROFILE_JSON = {
     pattern: "12-hour shifts",
     cycle: "2 days ON → 2 nights ON → 2 OFF",
     shiftDesignation: "C shift",
-    calendarPdfUrl: "/Shift Calendar 2026.pdf",
+    calendarPdfUrl: SHIFT_CALENDAR_PDF_PUBLIC_PATH,
     dayShift: "06:00–18:00 (approx.)",
     nightShift: "18:00–06:00 (approx.)",
     implications: [

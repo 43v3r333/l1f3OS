@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react"
-import { Activity, BarChart3, Brain, Sparkles } from "lucide-react"
+import { Activity, BarChart3, Brain, CalendarDays, Sparkles } from "lucide-react"
 import { Link } from "react-router-dom"
 import {
   Bar,
@@ -16,6 +16,7 @@ import DashboardLiveMonitor from "@/components/DashboardLiveMonitor"
 import DashboardRemindersStrip from "@/components/DashboardRemindersStrip"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { SHIFT_CALENDAR_PDF_PUBLIC_PATH } from "@/lib/shiftCalendarForAi"
 import { buildMemorySnapshot, generateInsights } from "@/lib/memory"
 import { getLocalDateISO } from "@/lib/utils"
 import { useStore } from "@/store/useStore"
@@ -131,9 +132,15 @@ export default function Dashboard() {
             Multi-agent check-in: job, startup, finance, discipline — unified plan + Supabase memory.
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-2">
           <Button asChild className="w-full">
             <Link to="/life">Open Life Manager</Link>
+          </Button>
+          <Button asChild variant="outline" className="w-full" size="sm">
+            <a href={SHIFT_CALENDAR_PDF_PUBLIC_PATH} target="_blank" rel="noopener noreferrer">
+              <CalendarDays className="size-4 shrink-0" />
+              2026 shift calendar (PDF, C shift)
+            </a>
           </Button>
         </CardContent>
       </Card>

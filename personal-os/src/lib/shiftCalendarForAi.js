@@ -1,5 +1,8 @@
 import { getAiProxyOrigin } from "@/lib/aiProxyOrigin"
 
+/** Public URL for `personal-os/public/Shift Calendar 2026.pdf` (Vite root). */
+export const SHIFT_CALENDAR_PDF_PUBLIC_PATH = "/Shift Calendar 2026.pdf"
+
 const LIFE_MANAGER_SHIFT_CALENDAR_MAX_CHARS = 6000
 const COPILOT_SHIFT_CALENDAR_MAX_CHARS = 4000
 
