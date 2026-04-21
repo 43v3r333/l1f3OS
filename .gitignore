@@ -1,0 +1,31 @@
+# Dependencies
+**/node_modules/
+
+# Builds
+**/dist/
+**/dist-ssr/
+
+# Environment (never commit secrets)
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+logs/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Cursor local state (optional; remove these lines if you want rules in-repo)
+.cursor/
+
+# Vite / tooling
+*.local
+
+# Weave / life-manager export (often contains project URLs and personal context)
+AI_Life_Manager.json

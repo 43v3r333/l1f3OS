@@ -1,0 +1,37 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 240 25% 7%;
+    --foreground: 220 32% 92%;
+    --card: 238 22% 10%;
+    --card-foreground: 220 28% 92%;
+    --muted: 236 20% 14%;
+    --muted-foreground: 220 15% 68%;
+    --primary: 265 90% 72%;
+    --primary-foreground: 260 100% 8%;
+    --border: 238 25% 18%;
+    --input: 238 22% 16%;
+    --ring: 267 80% 68%;
+    --radius: 1rem;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply min-h-svh overscroll-y-contain bg-background text-foreground antialiased;
+  }
+
+  /* Avoid horizontal scroll jank on narrow layouts */
+  html {
+    overflow-x: clip;
+  }
+
+  .dark {
+    color-scheme: dark;
+  }
+}
