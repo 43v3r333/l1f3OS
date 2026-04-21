@@ -305,6 +305,8 @@ create policy "assistant_messages_all_dev" on public.assistant_messages for all 
 
 Stores key-value rows for sessions and goals (`life_manager_session_*`, `life_manager_goals_current`).
 
+**Rolling digest (continuous memory):** `life_manager_ai_digest` — JSON written after you **Approve** a Life Manager plan. It merges prior digest + the new session (summary, `themes`, `avoid`, `repeat`) so prompts and the Quick Capture copilot can reuse long-horizon context without dumping every historical session. Life Manager prompts still include the last few `life_manager_session_*` rows plus pinned keys, all size-capped in code (`lifeManagerMemoryForPrompt.js`).
+
 ```sql
 create table if not exists public.life_manager_memory (
   key text primary key,

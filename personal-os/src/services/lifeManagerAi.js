@@ -5,6 +5,8 @@
 
 import { getAiProxyOrigin } from "@/lib/aiProxyOrigin"
 import { getBaselineCalibrationBlock } from "@/lib/lifeManagerUserProfile"
+import { formatLifeManagerMemoryForPrompt } from "@/lib/lifeManagerMemoryForPrompt"
+import { fetchShiftCalendarExcerptForLifeManager } from "@/lib/shiftCalendarForAi"
 const lifeManagerFastMode = String(import.meta.env.VITE_LIFEMANAGER_FAST_MODE || "true") === "true"
 const lifeManagerFastConcurrencyRaw = Number.parseInt(
   String(import.meta.env.VITE_LIFEMANAGER_FAST_CONCURRENCY || "2"),
@@ -37,14 +39,17 @@ async function runWithConcurrency(taskFns, limit) {
   return results
 }
 
-async function chatCompletion({
+export async function chatCompletion({
   system,
   user,
   temperature = 0.4,
   maxTokens = 2000,
   onTransientError,
+  /** When true, do not cap maxTokens in fast mode (e.g. digest JSON merge). */
+  bypassFastTokenCap = false,
 }) {
-  const cappedMaxTokens = lifeManagerFastMode ? Math.min(maxTokens, 420) : maxTokens
+  const cappedMaxTokens =
+    lifeManagerFastMode && !bypassFastTokenCap ? Math.min(maxTokens, 420) : maxTokens
   let lastError = null
   const maxAttempts = 4
 
@@ -98,20 +103,13 @@ export function assembleContext({
   additionalContext,
   memoryData,
   memoryFound,
+  memoryRows = [],
   liveSnapshotText = "",
+  shiftCalendarExcerpt = "",
 }) {
   let memorySummary = "No previous session data found. This appears to be a first session."
   if (memoryFound && memoryData && Object.keys(memoryData).length > 0) {
-    const parts = []
-    for (const [k, val] of Object.entries(memoryData)) {
-      const cleanKey = k.replace(/^life_manager_/, "")
-      if (typeof val === "object" && val !== null) {
-        parts.push(`[${cleanKey}]: ${JSON.stringify(val, null, 2)}`)
-      } else {
-        parts.push(`[${cleanKey}]: ${String(val)}`)
-      }
-    }
-    memorySummary = parts.join("\n")
+    memorySummary = formatLifeManagerMemoryForPrompt(memoryData, memoryRows).text
   }
 
   const fullContext = `${getBaselineCalibrationBlock()}
@@ -138,6 +136,9 @@ ${additionalContext?.trim() ? additionalContext : "None"}
 LIVE APP SNAPSHOT (from personal-os — logs, tasks, reminders; reconcile with the check-in above):
 ${liveSnapshotText?.trim() ? liveSnapshotText.trim() : "(none — open Dashboard once so data syncs, then generate again.)"}
 
+SHIFT CALENDAR 2026 (C shift — excerpt):
+${shiftCalendarExcerpt?.trim() ? shiftCalendarExcerpt.trim() : "(calendar excerpt unavailable — start dev:server)"}
+
 STORED MEMORY & HISTORY:
 ${memorySummary}
 `
@@ -145,7 +146,7 @@ ${memorySummary}
   return { fullContext, memorySummary }
 }
 
-const LIFE_PLANNER_SYSTEM = `You are a Life Planner for a factory IT engineer on 12h rotations (2 days / 2 nights / 2 off) building 43v3r Technology on the side.
+const LIFE_PLANNER_SYSTEM = `You are a Life Planner for a factory IT engineer on C shift (12h rotations). When the context includes a non-empty "SHIFT CALENDAR 2026" excerpt, use it to decide which dates are day work, night work, or off. When that excerpt is missing or empty, fall back to the generic 2 days / 2 nights / 2 off pattern from the baseline.
 
 Your job: Time-blocked plans that fit REAL shift fatigue — not fantasy founder schedules.
 
@@ -173,7 +174,7 @@ RULES:
 - If session financial update is empty, still give one sharp diagnostic using baseline + history
 - Be direct. No sugarcoating.`
 
-const STARTUP_SYSTEM = `You are a Startup Builder for 43v3r Technology — building while on 12h rotating shifts, limited capital, CPU-only laptop.
+const STARTUP_SYSTEM = `You are a Startup Builder for 43v3r Technology — building while on C shift / 12h rotating shifts, limited capital, CPU-only laptop. Respect off-day vs on-shift windows from the calendar excerpt in context when present; otherwise assume 2d/2n/2off.
 
 CONTEXT: IT/MES/SCADA/SQL strength; tools: Cursor, Supabase, FastAPI, Vue, Postgres, Replit. Multiple project ideas exist (MES AI, trading bot, hedge fund concept, football app, agency) — HIGH RISK of overextension.
 
@@ -188,7 +189,7 @@ RULES:
 - Pricing: ZAR-first, optional USD; name a number and who pays
 - Be blunt about scope creep and “science projects”`
 
-const WORK_SYSTEM = `You are Work Mastery for factory IT: networking, MES, SCADA, VMs, SQL — performance on the job funds everything else.
+const WORK_SYSTEM = `You are Work Mastery for factory IT: networking, MES, SCADA, VMs, SQL — performance on the job funds everything else. The user is on C shift; use the calendar excerpt in full context for day vs night vs off when available.
 
 Your job: One sharp improvement per session that pays off on the next shift.
 
@@ -200,7 +201,7 @@ RULES:
 - Certifications only when they unlock pay or responsibility the user wants
 - No generic study lists — one drill, one application`
 
-const COACH_SYSTEM = `You are an Execution Coach for someone on 2d/2n/2off 12h shifts with many parallel AI projects.
+const COACH_SYSTEM = `You are an Execution Coach for someone on C shift (12h factory rotations) with many parallel AI projects. When the SHIFT CALENDAR excerpt in context lists concrete dates, treat it as authoritative for work vs off vs night; otherwise use generic 2d/2n/2off.
 
 You are direct, not cruel. You optimize for follow-through, not motivation posters.
 
@@ -245,6 +246,7 @@ OUTPUT FORMAT:
 RULES:
 - No repetition between sections
 - Resolve conflicts: sleep and job performance beat side-project ego; then ONE revenue thread for 43v3r
+- C shift: honor the calendar excerpt in context for timing when it is non-empty; otherwise align to 2d/2n/2off
 - Keep commitments realistic for shift workers (not 12h of deep work after a night shift)
 - Call out overextension if specialists disagree — unify to fewer tasks
 - Bold the single most important action of the day`
@@ -371,7 +373,15 @@ export async function runFullLifeManagerPipeline(
   memoryFound,
   onProgress,
   liveSnapshotText = "",
+  memoryRows = [],
 ) {
+  let shiftCalendarExcerpt = ""
+  try {
+    shiftCalendarExcerpt = await fetchShiftCalendarExcerptForLifeManager()
+  } catch {
+    shiftCalendarExcerpt = ""
+  }
+
   const { fullContext } = assembleContext({
     sessionType: checkIn.sessionType,
     shiftStatus: checkIn.shiftStatus,
@@ -383,7 +393,9 @@ export async function runFullLifeManagerPipeline(
     additionalContext: checkIn.additionalContext,
     memoryData: memoryMap,
     memoryFound,
+    memoryRows,
     liveSnapshotText,
+    shiftCalendarExcerpt,
   })
 
   onProgress?.("Running Life Planner...")

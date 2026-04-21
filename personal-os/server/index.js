@@ -2,9 +2,12 @@ import cors from "cors"
 import dotenv from "dotenv"
 import express from "express"
 import fs from "node:fs/promises"
+import { createRequire } from "node:module"
 import path from "node:path"
 import process from "node:process"
 import { fileURLToPath } from "node:url"
+
+const require = createRequire(import.meta.url)
 
 dotenv.config()
 
@@ -26,6 +29,32 @@ const OLLAMA_NUM_PREDICT_DEFAULT = Number(process.env.OLLAMA_NUM_PREDICT_DEFAULT
 const PROFILE_SHEET_PATH = path.resolve(__dirname, "..", "public", "user-profile-sheet.csv")
 const PROFILE_SHEET_DEFAULT_PATH = path.resolve(__dirname, "..", "public", "user-profile-sheet.default.csv")
 const PROFILE_SHEET_MAX_BYTES = 280_000
+
+const SHIFT_CALENDAR_PDF_PATH = path.resolve(__dirname, "..", "public", "Shift Calendar 2026.pdf")
+/** Max characters returned by API (client may slice smaller for prompts). */
+const SHIFT_CALENDAR_API_TEXT_CAP = 14_000
+
+/** @type {{ loaded: boolean, fullText: string, warning: string, loadError: string }} */
+let shiftCalendarCache = { loaded: false, fullText: "", warning: "", loadError: "" }
+
+async function loadShiftCalendarPdfIntoCache() {
+  if (shiftCalendarCache.loaded) return
+  shiftCalendarCache.loaded = true
+  try {
+    const buf = await fs.readFile(SHIFT_CALENDAR_PDF_PATH)
+    const pdfParse = require("pdf-parse")
+    const data = await pdfParse(buf)
+    const raw = String(data?.text ?? "").replace(/\r\n/g, "\n").replace(/\r/g, "\n").trim()
+    shiftCalendarCache.fullText = raw
+    if (!raw.length) {
+      shiftCalendarCache.warning =
+        "PDF parsed but no text layers found (may be image-only). C shift still applies from app profile."
+    }
+  } catch (e) {
+    shiftCalendarCache.loadError = e?.message || String(e)
+    shiftCalendarCache.fullText = ""
+  }
+}
 
 function isLikelyXlsxZipBuffer(buf) {
   if (!buf || buf.length < 4) return false
@@ -206,6 +235,41 @@ app.get("/api/profile-sheet", async (_req, res) => {
       ok: false,
       error: "Could not read user-profile-sheet.csv from public/",
       detail: error?.message || String(error),
+    })
+  }
+})
+
+app.get("/api/shift-calendar-text", async (_req, res) => {
+  try {
+    await loadShiftCalendarPdfIntoCache()
+    if (shiftCalendarCache.loadError) {
+      res.json({
+        ok: true,
+        text: "",
+        truncated: false,
+        charCount: 0,
+        warning: `Shift calendar PDF unavailable: ${shiftCalendarCache.loadError}`,
+      })
+      return
+    }
+    const full = shiftCalendarCache.fullText
+    const truncated = full.length > SHIFT_CALENDAR_API_TEXT_CAP
+    const text = truncated ? full.slice(0, SHIFT_CALENDAR_API_TEXT_CAP) : full
+    const baseWarning = shiftCalendarCache.warning || ""
+    res.json({
+      ok: true,
+      text,
+      truncated,
+      charCount: text.length,
+      ...(baseWarning ? { warning: baseWarning } : {}),
+    })
+  } catch (error) {
+    res.status(500).json({
+      ok: false,
+      text: "",
+      truncated: false,
+      charCount: 0,
+      error: error?.message || String(error),
     })
   }
 })

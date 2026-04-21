@@ -17,6 +17,8 @@ work,work_environment,Industrial factory; MES; SCADA; PLC-connected machines; HM
 work,work_focus,Networking | Virtual machines | MES (SQL configs downtime tracking)
 work,current_challenge,Stronger practical understanding of factory systems; more efficient reliable troubleshooting
 work,performance_priority,Improve job performance and reliability on-shift
+work,shift_designation,C shift
+work,shift_calendar_file,Shift Calendar 2026.pdf
 
 finances,currency_primary,ZAR
 finances,monthly_take_home,21000
@@ -70,7 +72,7 @@ behavioral,pattern_multiproject,Tends to take on multiple complex projects — n
 behavioral,pattern_systems,Strong focus on building systems
 behavioral,pattern_execution,Needs structured daily execution and fewer parallel threads
 
-agent_calibration,life_planner,Plans MUST respect 2 days 2 nights 2 off 12h shifts; never assume 9-5; Durban ZAR context
+agent_calibration,life_planner,C shift user; use calendar excerpt in AI context when present for work off night days; else 2 days 2 nights 2 off 12h; never assume 9-5; Durban ZAR context
 agent_calibration,execution_coach,Max 1-2 core revenue projects at a time; max 3 non-negotiables per day; push first paying customer over new features
 agent_calibration,financial_strategist,Use stated ZAR figures; flag leakage (subscriptions lunch transport cigarettes); TFSA ETF discipline where applicable
 agent_calibration,startup_builder,Fastest path to first paying customer; industrial AI MES credibility from day job

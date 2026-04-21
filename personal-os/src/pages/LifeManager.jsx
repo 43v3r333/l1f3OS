@@ -10,6 +10,7 @@ import AiMarkdown from "@/components/AiMarkdown"
 import { buildLiveOsSnapshotForAi } from "@/lib/liveOsSnapshot"
 import { ensureUserProfileSheetLoaded } from "@/lib/userProfileSheet"
 import { runFullLifeManagerPipeline } from "@/services/lifeManagerAi"
+import { updateLifeManagerDigestFromApprove } from "@/services/lifeManagerDigestAi"
 import { fetchLifeManagerMemory, upsertLifeManagerMemory } from "@/services/supabase"
 import { useStore } from "@/store/useStore"
 import { cn } from "@/lib/utils"
@@ -120,6 +121,7 @@ export default function LifeManager() {
 
   const [checkIn, setCheckIn] = useState(defaultCheckIn)
   const [memoryMap, setMemoryMap] = useState({})
+  const [memoryRows, setMemoryRows] = useState([])
   const [memoryFound, setMemoryFound] = useState(false)
   const [memoryLoadError, setMemoryLoadError] = useState("")
 
@@ -152,12 +154,14 @@ export default function LifeManager() {
   const loadMemory = useCallback(async () => {
     setMemoryLoadError("")
     try {
-      const { map } = await fetchLifeManagerMemory()
+      const { map, rows } = await fetchLifeManagerMemory()
       setMemoryMap(map)
+      setMemoryRows(rows ?? [])
       setMemoryFound(Object.keys(map).length > 0)
     } catch (e) {
       setMemoryLoadError(e.message)
       setMemoryMap({})
+      setMemoryRows([])
       setMemoryFound(false)
     }
   }, [])
@@ -188,6 +192,7 @@ export default function LifeManager() {
         memoryFound,
         setProgressStatus,
         liveSnapshotText,
+        memoryRows,
       )
       setOutputs(result)
       setUnifiedPlan(result.unifiedPlan)
@@ -224,7 +229,15 @@ export default function LifeManager() {
       }
       await upsertLifeManagerMemory("life_manager_goals_current", goalsSnapshot)
 
-      setSaveStatus("Plan approved and saved to memory. Goals snapshot updated.")
+      const digestResult = await updateLifeManagerDigestFromApprove({
+        memoryMap,
+        sessionKey,
+        sessionRecord,
+        outputs,
+      })
+      setSaveStatus(
+        `Plan approved and saved to memory. Goals snapshot updated.${digestResult.ok ? " Rolling AI digest updated." : ""}`,
+      )
       await loadMemory()
     } catch (e) {
       setSaveStatus(e.message || "Save failed.")

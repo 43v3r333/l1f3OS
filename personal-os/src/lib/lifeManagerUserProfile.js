@@ -34,6 +34,8 @@ export const USER_MEMORY_PROFILE_JSON = {
   workSchedule: {
     pattern: "12-hour shifts",
     cycle: "2 days ON → 2 nights ON → 2 OFF",
+    shiftDesignation: "C shift",
+    calendarPdfUrl: "/Shift Calendar 2026.pdf",
     dayShift: "06:00–18:00 (approx.)",
     nightShift: "18:00–06:00 (approx.)",
     implications: [
@@ -121,7 +123,8 @@ export const USER_MEMORY_PROFILE_JSON = {
     "Burnout: shift work + many parallel products",
   ],
   calibration: {
-    lifePlanner: "Plans MUST respect 2d/2n/2off 12h shifts; Durban ZAR; never assume 9–5",
+    lifePlanner:
+      "User is C shift; when a calendar excerpt is in context, align work/off/night days to it; else 2d/2n/2off 12h; Durban ZAR; never assume 9–5",
     executionCoach: "Max 1–2 core revenue projects; max 3 non-negotiables/day; first paying customer over new features",
     financialStrategist: "Stated ZAR only; flag leakage; TFSA/ETF discipline where applicable",
     startupBuilder: "Fastest path to first paying customer; leverage factory/MES credibility",
@@ -182,7 +185,7 @@ export function getBaselineCalibrationBlock() {
     `USER BASELINE (calibrate all agents; session fields may override):`,
     `- Identity: ${p.profile.name}; ${p.profile.locationContext}.`,
     `- Work: ${p.profile.career}; domains: ${p.profile.workDomains.join("; ")}.`,
-    `- Schedule: ${p.workSchedule.cycle}; 12h shifts.`,
+    `- Schedule: ${p.workSchedule.shiftDesignation} (${p.workSchedule.cycle}); 12h shifts. Official calendar: ${p.workSchedule.calendarPdfUrl} — when an excerpt appears in this prompt, treat it as ground truth for which calendar days are work vs off vs night; otherwise use the generic cycle.`,
     `- Income: ${p.finances.monthlyIncome} ZAR/mo; known fixed ~${p.finances.approximateFixedTotal} ZAR (rent ${fe.rent}, groceries ${fe.groceries}, wifi ${fe.wifi}, Disney+ ${fe.disneyPlus}, cigarettes ${fe.cigarettes}, family ${fe.familySupport}); variable: ${p.finances.variableNotes.join("; ")}.`,
     `- Constraints: ${p.constraints.hardware}; ${p.constraints.capital}; ${p.constraints.time}.`,
     `- Startup: ${p.profile.company}; ${p.projects.active.length} active concepts — RISK overextension; enforce 1–2 revenue cores.`,

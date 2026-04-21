@@ -17,6 +17,7 @@ export const LIFE_MANAGER_MEMORY_KEYS = [
   "life_manager_goals_current",
   "life_manager_finance_settings",
   "life_manager_user_notes",
+  "life_manager_ai_digest",
 ]
 
 export const SYSTEM_ACTION_OPS = new Set([

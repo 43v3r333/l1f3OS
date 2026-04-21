@@ -1,4 +1,5 @@
 import { getAiProxyOrigin } from "@/lib/aiProxyOrigin"
+import { fetchShiftCalendarExcerptForCopilot } from "@/lib/shiftCalendarForAi"
 import { getLocalDateISO } from "@/lib/utils"
 import { useStore } from "@/store/useStore"
 import {
@@ -8,7 +9,9 @@ import {
   SAAS_LANES,
   LIFE_MANAGER_MEMORY_KEYS,
 } from "@/lib/systemActionSchema"
+import { LIFE_MANAGER_AI_DIGEST_KEY } from "@/lib/lifeManagerMemoryForPrompt"
 import { parseDelimitedTable, rowsToObjects } from "@/lib/userProfileSheet"
+import { fetchLifeManagerMemory } from "@/services/supabase"
 import { fetchProfileSheetFromServer } from "@/services/profileSheetApi"
 
 const PROFILE_CONTEXT_MAX_ROWS = 80
@@ -123,6 +126,56 @@ export async function buildSystemCopilotContextBundle() {
       }
     : null
 
+  /** Bounded slice of Supabase Life Manager memory for copilot routing. */
+  let life_manager = {
+    available: false,
+    digest_summary: "",
+    digest_themes: [],
+    digest_avoid: [],
+    digest_repeat: [],
+    goals_priority: "",
+    goals_plan_snippet: "",
+    finance_settings_note: "",
+    load_error: "",
+  }
+  try {
+    const { map } = await fetchLifeManagerMemory()
+    const digest = map[LIFE_MANAGER_AI_DIGEST_KEY]
+    const goals = map.life_manager_goals_current
+    const fin = map.life_manager_finance_settings
+    if (digest && typeof digest === "object") {
+      life_manager.available = true
+      life_manager.digest_summary = String(digest.summary ?? "").slice(0, 1800)
+      life_manager.digest_themes = Array.isArray(digest.themes)
+        ? digest.themes.map((t) => String(t).slice(0, 160)).filter(Boolean).slice(0, 8)
+        : []
+      life_manager.digest_avoid = Array.isArray(digest.avoid)
+        ? digest.avoid.map((t) => String(t).slice(0, 160)).filter(Boolean).slice(0, 8)
+        : []
+      life_manager.digest_repeat = Array.isArray(digest.repeat)
+        ? digest.repeat.map((t) => String(t).slice(0, 160)).filter(Boolean).slice(0, 8)
+        : []
+    }
+    if (goals && typeof goals === "object") {
+      life_manager.available = true
+      life_manager.goals_priority = String(goals.current_priority ?? "").slice(0, 280)
+      life_manager.goals_plan_snippet = String(goals.latest_plan_summary ?? "").slice(0, 450)
+    }
+    if (fin && typeof fin === "object") {
+      life_manager.available = true
+      life_manager.finance_settings_note = JSON.stringify(fin).slice(0, 700)
+    }
+  } catch (e) {
+    life_manager.load_error = String(e?.message || e).slice(0, 200)
+  }
+
+  let shift_calendar_excerpt = ""
+  try {
+    shift_calendar_excerpt = await fetchShiftCalendarExcerptForCopilot()
+  } catch {
+    shift_calendar_excerpt = ""
+  }
+
   return {
     local_date: today,
     today_task_preview: (s.todayTask || "").slice(0, 200),
@@ -135,6 +188,9 @@ export async function buildSystemCopilotContextBundle() {
     saas_open_tasks,
     reminders_open,
     today_log,
+    life_manager,
+    shift_designation: "C shift",
+    shift_calendar_excerpt,
   }
 }
 
@@ -144,7 +200,7 @@ function buildSystemPrompt() {
   const lmKeys = LIFE_MANAGER_MEMORY_KEYS.join(", ")
 
   return `You are a routing assistant for a personal productivity app (personal-os).
-The user message is followed by a JSON "Context" object with their local date, Today task draft, counts, a sample of their profile CSV rows (section/key/value), open SaaS tasks, open reminders, and today's daily log row if it exists.
+The user message is followed by a JSON "Context" object with their local date, Today task draft, counts, a sample of their profile CSV rows (section/key/value), open SaaS tasks, open reminders, today's daily log row if it exists, \`life_manager\` (rolling AI digest + goals/finance snippets from Supabase when available), \`shift_designation\` (user is C shift), and \`shift_calendar_excerpt\` (bounded plain text from the 2026 shift PDF when the local AI proxy is running — may be empty).
 
 Use that context to choose the right operations: prefer append_profile_row when the user clearly wants a durable calibration field; prefer add_note for narrative capture; use existing profile keys as reference so you do not invent conflicting keys unless the user asks for a new one.
 

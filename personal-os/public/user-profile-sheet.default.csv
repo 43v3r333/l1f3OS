@@ -13,6 +13,8 @@ identity,country,South Africa
 work,job_title,IT Engineer (Tyre Manufacturing Factory)
 work,shift_cycle,2 days ON | 2 nights ON | 2 OFF (12-hour shifts)
 work,work_domains,Networking|MES|SCADA|VMs|Industrial systems
+work,shift_designation,C shift
+work,shift_calendar_file,Shift Calendar 2026.pdf
 
 company,legal_name,43v3r Technology
 company,role_in_company,Founder / builder
@@ -32,7 +34,7 @@ constraints,capital,Limited — prefer low-cost validation and hosted free tiers
 
 goals_startup,headline,Scale 43v3r Technology toward staged revenue milestones
 
-agent_calibration,life_planner,Plans MUST respect 2d/2n/2off; never assume 9-5; Durban ZAR
+agent_calibration,life_planner,C shift; use calendar excerpt when AI provides it; else 2d/2n/2off; never assume 9-5; Durban ZAR
 agent_calibration,execution_coach,Max 1-2 core revenue projects; max 3 non-negotiables per day
 
 ai_preferences,response_style,Direct|ZAR-first for money
