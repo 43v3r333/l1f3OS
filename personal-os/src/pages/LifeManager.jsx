@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { Brain, Briefcase, Check, Dumbbell, Laptop, LoaderCircle, RefreshCw, Sparkles, Wallet, X } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import AiMarkdown from "@/components/AiMarkdown"
+import { getShiftScheduleAnchorForPrompt } from "@/lib/lifeManagerUserProfile"
 import { buildLiveOsSnapshotForAi } from "@/lib/liveOsSnapshot"
 import { ensureUserProfileSheetLoaded } from "@/lib/userProfileSheet"
 import { runFullLifeManagerPipeline } from "@/services/lifeManagerAi"
@@ -118,6 +119,7 @@ function SpecialistPanel({ label, icon, children, className, size = "default" })
 
 export default function LifeManager() {
   const hydrateAllCore = useStore((s) => s.hydrateAllCore)
+  const shiftAnchorHint = useMemo(() => getShiftScheduleAnchorForPrompt(), [])
 
   const [checkIn, setCheckIn] = useState(defaultCheckIn)
   const [memoryMap, setMemoryMap] = useState({})
@@ -324,7 +326,13 @@ export default function LifeManager() {
                       className="h-9 text-sm"
                       value={checkIn.shiftStatus}
                       onChange={(e) => setField("shiftStatus", e.target.value)}
+                      placeholder="e.g. Night until 06:00; next days off"
                     />
+                    {shiftAnchorHint ? (
+                      <p className="text-[10px] leading-snug text-muted-foreground">
+                        Profile anchor (in every AI run): {shiftAnchorHint}
+                      </p>
+                    ) : null}
                   </div>
                   <div className="col-span-2 space-y-1.5 sm:col-span-1">
                     <Label htmlFor="energy" className="text-xs">

@@ -37,6 +37,11 @@ export const USER_MEMORY_PROFILE_JSON = {
     cycle: "2 days ON → 2 nights ON → 2 OFF",
     shiftDesignation: "C shift",
     calendarPdfUrl: SHIFT_CALENDAR_PDF_PUBLIC_PATH,
+    /** Update when your block changes (operational truth for agents alongside calendar excerpt). */
+    scheduleTimezone: "Africa/Johannesburg",
+    scheduleAnchorUpdated: "2026-04-22",
+    scheduleNote:
+      "Africa/Johannesburg as of 2026-04-22: on C-shift NIGHT (18:00→06:00) ending 2026-04-23 06:00. Calendar dates 2026-04-23 and 2026-04-24 are OFF (two consecutive off days after this night). Do not plan factory on-shift blocks on those dates. After 06:00 when going off, prioritize sleep handoff and recovery before startup deep work. Cross-check the SHIFT CALENDAR 2026 excerpt when present so plans match official C-shift dates.",
     dayShift: "06:00–18:00 (approx.)",
     nightShift: "18:00–06:00 (approx.)",
     implications: [
@@ -125,7 +130,7 @@ export const USER_MEMORY_PROFILE_JSON = {
   ],
   calibration: {
     lifePlanner:
-      "User is C shift; when a calendar excerpt is in context, align work/off/night days to it; else 2d/2n/2off 12h; Durban ZAR; never assume 9–5",
+      "User is C shift; honor workSchedule.scheduleNote (shift anchor) for the current block; when SHIFT CALENDAR excerpt is in context use it for date-level work/off/night and reconcile with anchor; else 2d/2n/2off 12h; Durban ZAR; never assume 9–5",
     executionCoach: "Max 1–2 core revenue projects; max 3 non-negotiables/day; first paying customer over new features",
     financialStrategist: "Stated ZAR only; flag leakage; TFSA/ETF discipline where applicable",
     startupBuilder: "Fastest path to first paying customer; leverage factory/MES credibility",
@@ -178,15 +183,30 @@ export const CONTINUOUS_LEARNING_RULES = [
   "Income target ($100k/mo) stays aspirational; track ZAR runway and first paid milestone separately.",
 ]
 
+/** One line for copilot / UI; empty if no anchor note configured. */
+export function getShiftScheduleAnchorForPrompt() {
+  const w = USER_MEMORY_PROFILE_JSON.workSchedule
+  const note = typeof w.scheduleNote === "string" ? w.scheduleNote.trim() : ""
+  if (!note) return ""
+  const tz = w.scheduleTimezone || "Africa/Johannesburg"
+  const u = w.scheduleAnchorUpdated || ""
+  return u ? `[${tz}; anchor updated ${u}] ${note}` : `[${tz}] ${note}`
+}
+
 /** Compressed block injected into every Life Manager prompt */
 export function getBaselineCalibrationBlock() {
   const p = USER_MEMORY_PROFILE_JSON
   const fe = p.finances.fixedExpenses
+  const anchorLine =
+    typeof p.workSchedule.scheduleNote === "string" && p.workSchedule.scheduleNote.trim()
+      ? `- Shift anchor (${p.workSchedule.scheduleTimezone || "local"}; updated ${p.workSchedule.scheduleAnchorUpdated || "?"}): ${p.workSchedule.scheduleNote.trim()}`
+      : ""
   const base = [
     `USER BASELINE (calibrate all agents; session fields may override):`,
     `- Identity: ${p.profile.name}; ${p.profile.locationContext}.`,
     `- Work: ${p.profile.career}; domains: ${p.profile.workDomains.join("; ")}.`,
     `- Schedule: ${p.workSchedule.shiftDesignation} (${p.workSchedule.cycle}); 12h shifts. Official calendar: ${p.workSchedule.calendarPdfUrl} — when an excerpt appears in this prompt, treat it as ground truth for which calendar days are work vs off vs night; otherwise use the generic cycle.`,
+    ...(anchorLine ? [anchorLine] : []),
     `- Income: ${p.finances.monthlyIncome} ZAR/mo; known fixed ~${p.finances.approximateFixedTotal} ZAR (rent ${fe.rent}, groceries ${fe.groceries}, wifi ${fe.wifi}, Disney+ ${fe.disneyPlus}, cigarettes ${fe.cigarettes}, family ${fe.familySupport}); variable: ${p.finances.variableNotes.join("; ")}.`,
     `- Constraints: ${p.constraints.hardware}; ${p.constraints.capital}; ${p.constraints.time}.`,
     `- Startup: ${p.profile.company}; ${p.projects.active.length} active concepts — RISK overextension; enforce 1–2 revenue cores.`,

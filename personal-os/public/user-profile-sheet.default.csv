@@ -15,6 +15,9 @@ work,shift_cycle,2 days ON | 2 nights ON | 2 OFF (12-hour shifts)
 work,work_domains,Networking|MES|SCADA|VMs|Industrial systems
 work,shift_designation,C shift
 work,shift_calendar_file,Shift Calendar 2026.pdf
+work,schedule_timezone,Africa/Johannesburg
+work,schedule_anchor_updated,2026-04-22
+work,schedule_status_summary,"C-shift night until 06:00 2026-04-23; 2026-04-23 and 2026-04-24 are off days"
 
 company,legal_name,43v3r Technology
 company,role_in_company,Founder / builder
@@ -34,7 +37,7 @@ constraints,capital,Limited — prefer low-cost validation and hosted free tiers
 
 goals_startup,headline,Scale 43v3r Technology toward staged revenue milestones
 
-agent_calibration,life_planner,C shift; use calendar excerpt when AI provides it; else 2d/2n/2off; never assume 9-5; Durban ZAR
+agent_calibration,life_planner,C shift; honor schedule anchor rows + calendar excerpt when AI provides it; else 2d/2n/2off; never 9-5; Durban ZAR
 agent_calibration,execution_coach,Max 1-2 core revenue projects; max 3 non-negotiables per day
 
 ai_preferences,response_style,Direct|ZAR-first for money
