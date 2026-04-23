@@ -18,6 +18,7 @@ work,shift_calendar_file,Shift Calendar 2026.pdf
 work,schedule_timezone,Africa/Johannesburg
 work,schedule_anchor_updated,2026-04-22
 work,schedule_status_summary,"C-shift night until 06:00 2026-04-23; 2026-04-23 and 2026-04-24 are off days"
+work,commute,Own car (vehicle finance insurance fuel in finances fixed rows)
 
 company,legal_name,43v3r Technology
 company,role_in_company,Founder / builder
@@ -30,7 +31,11 @@ finances,fixed_wifi,500
 finances,fixed_disney_plus,140
 finances,fixed_cigarettes,400
 finances,fixed_family_support_father,1000
-finances,approx_fixed_known,7040
+finances,fixed_car_installment,5200
+finances,fixed_car_insurance,1500
+finances,fixed_fuel_monthly,1500
+finances,variable_transport,Own car; instalment insurance fuel in fixed rows
+finances,approx_fixed_known,15240
 
 constraints,hardware,8GB RAM laptop | i5 | no dedicated GPU
 constraints,capital,Limited — prefer low-cost validation and hosted free tiers

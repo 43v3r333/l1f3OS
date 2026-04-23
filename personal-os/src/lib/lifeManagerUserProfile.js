@@ -60,16 +60,22 @@ export const USER_MEMORY_PROFILE_JSON = {
     fixedExpenses: {
       rent: 3000,
       groceries: 2000,
+      carInstallment: 5200,
+      carInsurance: 1500,
+      fuel: 1500,
       wifi: 500,
       disneyPlus: 140,
       cigarettes: 400,
       familySupport: 1000,
     },
-    variableNotes: ["Transport (cab to work)", "Regular lunch purchases"],
-    approximateFixedTotal: 7040,
-    discretionaryAfterFixedApprox: 13960,
+    variableNotes: [
+      "Transport (owns car — vehicle finance + insurance + fuel all in fixed monthly baseline)",
+      "Regular lunch purchases",
+    ],
+    approximateFixedTotal: 15240,
+    discretionaryAfterFixedApprox: 5760,
     strategicNotes: [
-      "Limited disposable income after variables — track cab + lunch + subscriptions",
+      "Vehicle finance + insurance + fuel are a large fixed load (~8,200 ZAR) — tiny slack after rent and food; track fuel overruns + lunch + subscriptions",
       "Increase income aggressively; add structure and investment strategy in ZAR context",
       "Subscriptions (e.g. Disney+) and cigarettes are leakage candidates if cutting spend",
     ],
@@ -124,7 +130,7 @@ export const USER_MEMORY_PROFILE_JSON = {
   },
   risks: [
     "No single monetization spine while many projects run",
-    "Variable spend (cab, lunch) unmeasured — runway blind spots",
+    "Car installment + insurance + fuel dominate fixed outflows — little margin after rent/groceries; variable lunch and fuel overruns unmeasured",
     "CPU-only — ship with APIs / small models / selective cloud",
     "Burnout: shift work + many parallel products",
   ],
@@ -132,7 +138,8 @@ export const USER_MEMORY_PROFILE_JSON = {
     lifePlanner:
       "User is C shift; honor workSchedule.scheduleNote (shift anchor) for the current block; when SHIFT CALENDAR excerpt is in context use it for date-level work/off/night and reconcile with anchor; else 2d/2n/2off 12h; Durban ZAR; never assume 9–5",
     executionCoach: "Max 1–2 core revenue projects; max 3 non-negotiables/day; first paying customer over new features",
-    financialStrategist: "Stated ZAR only; flag leakage; TFSA/ETF discipline where applicable",
+    financialStrategist:
+      "Stated ZAR only; vehicle finance ~5200 + insurance ~1500 + fuel budget are material; flag leakage; TFSA/ETF discipline where applicable",
     startupBuilder: "Fastest path to first paying customer; leverage factory/MES credibility",
     workMastery: "Factory troubleshooting, MES, SQL, networking — one concrete on-shift or off-day action",
     synthesizer: "Resolve conflicts: sleep → job performance → one revenue thread",
@@ -157,7 +164,7 @@ export const PRIORITY_MATRIX = {
   dailyFocus: [
     "One deep-work block on off days for 43v3r",
     "One job-relevant skill or troubleshooting improvement on shift days",
-    "Track ZAR spend (especially cab + lunch) several times per week",
+    "Track ZAR spend (especially fuel + lunch) several times per week",
   ],
 }
 
@@ -165,13 +172,18 @@ export const FOCUS_RECOMMENDATION = {
   primary:
     "Name ONE first-paying-customer offer (likely industrial AI/MES-adjacent OR content agency) and freeze or park the other five ideas to backlog until there is revenue or a signed pilot.",
   secondary:
-    "Run a 14-day money log: every cab, lunch, subscription, and impulse buy — then one concrete change (route, packed lunch, or subscription trim) plus one income lever (overtime, cert, or small invoice).",
+    "Run a 14-day money log: every fuel top-up, lunch, subscription, and impulse buy — then one concrete change (driving habits, packed lunch, or subscription trim) plus one income lever (overtime, cert, or small invoice).",
 }
 
 export const IMMEDIATE_ACTIONS_7_DAYS = [
   { day: "1–2", action: "Name the single ‘first revenue’ offer in one sentence; list who pays and by when.", timeEstimate: "45 min" },
   { day: "3–4", action: "Move 5 of 7 active concepts to backlog/read-only; only 2 remain in active development until first payment.", timeEstimate: "1 h" },
-  { day: "5", action: "Write a monthly cash truth table: R21k in vs rent groceries wifi Disney+ cigarettes family + estimated cab + lunch.", timeEstimate: "30 min" },
+  {
+    day: "5",
+    action:
+      "Write a monthly cash truth table: R21k in vs rent groceries car finance R5200 insurance R1500 fuel R1500 wifi Disney+ cigarettes family + lunch.",
+    timeEstimate: "30 min",
+  },
   { day: "6–7", action: "Ship one tiny billable or proof artifact (demo, audit, landing + Calendly) for the chosen offer.", timeEstimate: "3–6 h across off days" },
 ]
 
@@ -207,12 +219,12 @@ export function getBaselineCalibrationBlock() {
     `- Work: ${p.profile.career}; domains: ${p.profile.workDomains.join("; ")}.`,
     `- Schedule: ${p.workSchedule.shiftDesignation} (${p.workSchedule.cycle}); 12h shifts. Official calendar: ${p.workSchedule.calendarPdfUrl} — when an excerpt appears in this prompt, treat it as ground truth for which calendar days are work vs off vs night; otherwise use the generic cycle.`,
     ...(anchorLine ? [anchorLine] : []),
-    `- Income: ${p.finances.monthlyIncome} ZAR/mo; known fixed ~${p.finances.approximateFixedTotal} ZAR (rent ${fe.rent}, groceries ${fe.groceries}, wifi ${fe.wifi}, Disney+ ${fe.disneyPlus}, cigarettes ${fe.cigarettes}, family ${fe.familySupport}); variable: ${p.finances.variableNotes.join("; ")}.`,
+    `- Income: ${p.finances.monthlyIncome} ZAR/mo; known fixed ~${p.finances.approximateFixedTotal} ZAR (rent ${fe.rent}, groceries ${fe.groceries}, car finance ${fe.carInstallment}, car insurance ${fe.carInsurance}, fuel ${fe.fuel}, wifi ${fe.wifi}, Disney+ ${fe.disneyPlus}, cigarettes ${fe.cigarettes}, family ${fe.familySupport}); variable: ${p.finances.variableNotes.join("; ")}.`,
     `- Constraints: ${p.constraints.hardware}; ${p.constraints.capital}; ${p.constraints.time}.`,
     `- Startup: ${p.profile.company}; ${p.projects.active.length} active concepts — RISK overextension; enforce 1–2 revenue cores.`,
     `- Goals: ${p.goals.startup}; secondaries: ${p.goals.secondary.join("; ")}.`,
     `- Coach rule: max 1–2 core projects; max 3 non-negotiables/day.`,
-    `- Finance rule: real ZAR, flag leakage (subscriptions, cab, lunch), no generic wealth tips.`,
+    `- Finance rule: real ZAR, flag leakage (subscriptions, fuel overruns, lunch), no generic wealth tips.`,
     `- Startup rule: revenue before complexity; CPU-friendly stack.`,
   ].join("\n")
 

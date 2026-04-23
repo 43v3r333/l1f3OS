@@ -22,18 +22,22 @@ work,shift_calendar_file,Shift Calendar 2026.pdf
 work,schedule_timezone,Africa/Johannesburg
 work,schedule_anchor_updated,2026-04-22
 work,schedule_status_summary,"C-shift night until 06:00 2026-04-23; 2026-04-23 and 2026-04-24 are off days"
+work,commute,Own car (vehicle finance insurance fuel in finances fixed rows)
 
 finances,currency_primary,ZAR
 finances,monthly_take_home,21000
 finances,fixed_rent,3000
 finances,fixed_groceries,2000
+finances,fixed_car_installment,5200
+finances,fixed_car_insurance,1500
 finances,fixed_wifi,500
 finances,fixed_disney_plus,140
 finances,fixed_cigarettes,400
 finances,fixed_family_support_father,1000
-finances,variable_transport,Cab to work
+finances,fixed_fuel_monthly,1500
+finances,variable_transport,Own car; instalment insurance fuel in fixed rows
 finances,variable_lunch,Regular lunch purchases
-finances,approx_fixed_known,7040
+finances,approx_fixed_known,15240
 finances,strategic_note,Limited disposable income; increase income aggressively; better structure and investment strategy
 
 skills,education,IT Diploma | Computer Engineering degree | Advanced Diploma IT (in progress) | Advanced Diploma Business Analysis (in progress)
